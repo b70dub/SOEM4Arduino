@@ -382,6 +382,8 @@ int hal_ethernet_open(void)
     }else{
         w5500.init(5);// ESP32's SS is typically GPIO5.
     }
+#elif defined(SOEM_PLATFORM_TEENSY41)
+    w5500.init_teensy();
 #else
     // Ethernet Shield 2
     // disable nCS for SD Card

@@ -16,7 +16,45 @@
 #include "Arduino.h"
 
 #include "w5500/w5500.h"
+
+/* Teensy 4.1 specific code */
+#if defined(SOEM_PLATFORM_TEENSY41)
+
+// Teensy 4.1 default pins (adjust to your wiring)
+#define W5500_CS_PIN    10
+#define W5500_RESET_PIN 9
+
+void W5500Class::init_teensy()
+{
+    pinMode(W5500_CS_PIN, OUTPUT);
+    digitalWrite(W5500_CS_PIN, HIGH);
+
+    pinMode(W5500_RESET_PIN, OUTPUT);
+    digitalWrite(W5500_RESET_PIN, LOW);
+    delay(10);
+    digitalWrite(W5500_RESET_PIN, HIGH);
+    delay(10);
+
+    // Initialize SPI
+    SPI.begin();
+    wiznet_SPI_settings = SPISettings(30000000, MSBFIRST, SPI_MODE0);
+
+    // Initialize W5500 chip
+    w5500.swReset();
+
+    for (int i = 0; i < MAX_SOCK_NUM; i++) {
+        uint8_t cntl_byte = (0x0C + (i << 5));
+        write(0x1E, cntl_byte, 2); // Sn_RXBUF_SIZE
+        write(0x1F, cntl_byte, 2); // Sn_TXBUF_SIZE
+    }
+}
+#endif
+
+/* End Teensy 4.1 specific code */
+
+
 //#if defined(W5500_ETHERNET_SHIELD)
+
 
 // W5500 controller instance
 W5500Class w5500;
