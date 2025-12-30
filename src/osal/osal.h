@@ -15,6 +15,12 @@ extern "C"
 #include <stdint.h>
 #include <stdbool.h>
 
+/* Platform detection */
+#if defined(ARDUINO_TEENSY41) || defined(__IMXRT1062__)
+#define SOEM_PLATFORM_TEENSY41
+/* Teensy 4.1 – ARM Cortex-M7 (i.MX RT1062) */
+#endif
+
 /* General types */
 
 #ifndef Arduino_h
