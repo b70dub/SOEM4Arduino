@@ -12,6 +12,28 @@
 
 #include "osal.h"
 
+/* Teensy 4.1 specific timing implementation */
+#if defined(SOEM_PLATFORM_TEENSY41)
+ec_timet osal_current_time(void)
+{
+    return (ec_timet) micros();  // microseconds since startup
+}
+
+void osal_timer_start(osal_timert *self, uint32 timeout_us)
+{
+    self->start_time = osal_current_time();
+    self->timeout = timeout_us;
+}
+
+boolean osal_timer_is_expired(osal_timert *self)
+{
+    ec_timet now = osal_current_time();
+    // micros() wraps every ~71 minutes, unsigned subtraction handles it
+    return (uint32)(now - self->start_time) >= self->timeout;
+}
+#endif
+/* End Teensy 4.1 specific timing implementation */
+
 ec_timet osal_current_time (void)
 {
    uint32 ret = micros();
